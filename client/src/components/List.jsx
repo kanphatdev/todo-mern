@@ -6,12 +6,15 @@ import { useState } from "react";
 const List = ({ todo, handleGetData }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [editTitle, setEditTitle] = useState(todo.title); // State for edit input
+  const [showToast, setShowToast] = useState(false); // State to manage toast visibility
 
   const handleDelete = async (id) => {
     removeData(id)
       .then((res) => {
         console.log(res);
         handleGetData(); // Re-fetch the data after deletion
+        setShowToast(true); // Show toast on successful deletion
+        setTimeout(() => setShowToast(false), 3000); // Hide the toast after 3 seconds
       })
       .catch((err) => {
         console.log(err);
@@ -23,7 +26,6 @@ const List = ({ todo, handleGetData }) => {
   };
 
   const handleSaveEdit = (id) => {
-    // Update the todo with the new title
     updateData(id, { title: editTitle })
       .then((res) => {
         console.log("Updated:", res);
@@ -75,6 +77,15 @@ const List = ({ todo, handleGetData }) => {
           </button>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {showToast && (
+        <div className="toast toast-end">
+          <div className="alert bg-red-500 text-white shadow-lg">
+            <span>Todo deleted successfully!</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
